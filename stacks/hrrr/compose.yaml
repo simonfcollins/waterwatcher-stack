@@ -1,0 +1,82 @@
+version: "3.9"
+
+services:
+  hrrr-service:
+    image: ghcr.io/simonfcollins/hrrr-service:1.0.0
+
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        order: stop-first
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 768M
+
+    volumes:
+      - hrrr-data:/data/hrrrzarr/:ro
+
+    networks:
+      - internal
+
+    healthcheck:
+      test: ["CMD", "bash", "-c", "pgrep uvicorn > /dev/null"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 180s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  hrrr-client:
+    image: ghcr.io/simonfcollins/hrrr-client:1.0.0
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+    volumes:
+      - hrrr-data:/data/hrrrzarr/
+
+    networks:
+      - internal
+      - outbound
+
+    healthcheck:
+      test: ["CMD", "bash", "-c", "pgrep cron > /dev/null"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 240s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  hrrr-data:
+    external: true
+
+networks:
+  internal:
+    external: true
+  outbound:
+    external: true

@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  spring-backend:
+    image: ghcr.io/simonfcollins/waterwatcher-backend:1.0.0
+
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 8G
+        reservations:
+          memory: 4G
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+    environment:
+      SPRING_DATASOURCE_USERNAME: springboot
+      SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/springboot_db_password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/waterwatcher?TimeZone=UTC&currentSchema=production,extensions
+
+    secrets:
+      - springboot_db_password
+
+    networks:
+      - internal
+      - outbound
+
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      interval: 10s
+      timeout: 3s
+      start_period: 240s
+      retries: 5
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  internal:
+    external: true
+  outbound:
+    external: true
+
+secrets:
+  springboot_db_password:
+    external: true

@@ -1,0 +1,141 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:latest
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          memory: 128M
+      placement:
+        constraints:
+          - node.role == manager
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+    configs:
+      - source: nginx_conf
+      - target: /etc/nginx/nginx.conf
+
+    volumes:
+      - certbot-etc:/etc/letsencrypt:ro
+      - certbot-web:/var/www/certbot
+      - ./fallback.html:/usr/share/nginx/html/fallback.html:ro
+
+    networks:
+      - internal
+
+    ports:
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  certbot-init:
+    image: certbot/certbot
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+      replicas: 1
+      restart_policy:
+        condition: none
+
+    entrypoint: /bin/sh
+    command: >
+      -c '
+      EMAIL="$(cat /run/secrets/certbot_email)";
+      if [ ! -d /etc/letsencrypt/live/sico.dev ]; then
+        echo "No existing cert found, issuing initial certificate...";
+        certbot certonly --webroot
+          -w /var/www/certbot
+          -d sico.dev
+          -d www.sico.dev
+          --email "$EMAIL"
+          --agree-tos
+          --no-eff-email;
+      else
+        echo "Certificate already exists, skipping init.";
+      fi'
+
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-web:/var/www/certbot
+
+    networks:
+      - internal
+      - outbound
+
+    secrets:
+      - certbot_email
+
+  certbot-renew:
+    image: certbot/certbot
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+    entrypoint: /bin/sh
+    command: >
+      -c "trap exit TERM;
+          while true;
+          do certbot renew --webroot -w /var/www/certbot;
+          sleep 12h;
+          done"
+
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-web:/var/www/certbot
+
+    networks:
+      - internal
+      - outbound
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+configs:
+  nginx_conf:
+    file: ./nginx.conf
+
+volumes:
+  certbot-etc:
+    external: true
+  certbot-web:
+    external: true
+
+networks:
+  internal:
+    external: true
+  outbound:
+    external: true
+
+secrets:
+  certbot_email:
+    external: true
