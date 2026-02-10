@@ -2,7 +2,7 @@
 This repository contains modular Docker Swarm stack files and documentation for deploying the WaterWatcher application.
 
 ## Info
-This is a single-node Docker Swarm application and does not currently support horizontal scaling across worker nodes.
+This is a **single-node Docker Swarm application** and does not currently support horizontal scaling across worker nodes.
 
 ## Setup
 1. Install the official Docker Engine packages for your platform from https://docs.docker.com/engine/install/
@@ -13,4 +13,7 @@ This is a single-node Docker Swarm application and does not currently support ho
 6. Follow the Docker secrets [setup instructions](secrets/README.md).
 
 ## Deployment
-1. Run the [deploy script](depoy/deploy.sh).
+1. Run the [deploy script](lifecycle/deploy.sh).
+
+## Teardown
+1. Run the [teardown script](lifecycle/teardown.sh).

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo docker volume create certbot-etc
-sudo docker volume create certbot-web
-sudo docker volume create pgdata
-sudo docker volume create hrrr-data
+docker volume create certbot-etc
+docker volume create certbot-web
+docker volume create pgdata
+docker volume create hrrr-data
