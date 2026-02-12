@@ -21,7 +21,7 @@ echo "Deploying WaterWatcher"
 echo ""
 
 echo "Deploying ingress stack"
-docker stack deploy --with-registry-auth -c ../stacks/ingress/compose.yaml ingress
+docker stack deploy --with-registry-auth -c ./stacks/ingress/compose.yaml ingress
 
 for svc in $(docker stack services ingress --format "{{.Name}}"); do
   wait_for_service "$svc"
@@ -29,7 +29,7 @@ done
 
 echo ""
 echo "Deploying data stack"
-docker stack deploy --with-registry-auth -c ../stacks/data/compose.yaml data
+docker stack deploy --with-registry-auth -c ./stacks/data/compose.yaml data
 
 for svc in $(docker stack services data --format "{{.Name}}"); do
   wait_for_service "$svc"
@@ -37,7 +37,7 @@ done
 
 echo ""
 echo "Deploying core stack"
-docker stack deploy --with-registry-auth -c ../stacks/core/compose.yaml core
+docker stack deploy --with-registry-auth -c ./stacks/core/compose.yaml core
 
 for svc in $(docker stack services core --format "{{.Name}}"); do
   wait_for_service "$svc"
@@ -45,7 +45,7 @@ done
 
 echo ""
 echo "Deploying hrrr stack"
-docker stack deploy --with-registry-auth -c ../stacks/hrrr/compose.yaml hrrr
+docker stack deploy --with-registry-auth -c ./stacks/hrrr/compose.yaml hrrr
 
 for svc in $(docker stack services hrrr --format "{{.Name}}"); do
   wait_for_service "$svc"

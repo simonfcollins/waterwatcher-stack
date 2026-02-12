@@ -23,7 +23,7 @@ Water Watcher application.
 - **Purpose:** Non-superuser password for backend app authentication.
 - **Used by:** spring-backend service.
 - **Notes:**  
-  - Create the secret in Swarm before deployment:  
+  - Must be created in Docker Swarm before deploying the stack: 
     ```bash
     echo "your_db_password_here" | docker secret create springboot_db_password -
     ```
@@ -31,14 +31,19 @@ Water Watcher application.
 
 ---
 
-### 3. `certbot_email`
-- **Purpose:** Email address for Let's Encrypt notifications and certificate renewal.  
-- **Used by:** Certbot container/service.  
+### 3. `cloudflared_creds`
+- **Purpose:** <tunnel_uuid>.json credential file for verifying .
+- **Used by:** Cloudflared service in the ingres stack.
 - **Notes:**  
-  - Required for SSL certificate management.  
-  - Example creation command:  
+  - Auto generated and saved to ~/.cloudflared/ with the following command:
     ```bash
-    echo "your_email@example.com" | docker secret create certbot_email -
+        cloudflared tunnel create <tunnel_name>
     ```
+  - Must be created in Docker Swarm before deploying the stack: 
+    ```bash
+    docker secret create cloudflared_creds ~/.cloudflared/<tunnel_uuid>.json
+    ```
+  - Keep this secret secure; do not expose it in version control.
+  - Encrypt or otherwise secure the original credentials file after this secret has been created.
 
 ---

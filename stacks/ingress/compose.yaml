@@ -1,6 +1,28 @@
 version: "3.9"
 
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+
+    command: tunnel run
+
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+    networks:
+      - internal
+      - outbound
+
+    secrets:
+      - source: cloudflared_creds
+        target: /etc/cloudflared/cloudflared_creds.json
+
+    configs:
+      - source: cloudflared_conf
+        target: /etc/cloudflared/config.yml
+
   nginx:
     image: nginx:latest
 
@@ -20,115 +42,19 @@ services:
 
     configs:
       - source: nginx_conf
-      - target: /etc/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
 
     volumes:
-      - certbot-etc:/etc/letsencrypt:ro
-      - certbot-web:/var/www/certbot
       - ./fallback.html:/usr/share/nginx/html/fallback.html:ro
 
     networks:
       - internal
 
-    ports:
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: host
-
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
-
-  certbot-init:
-    image: certbot/certbot
-
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 128M
-      replicas: 1
-      restart_policy:
-        condition: none
-
-    entrypoint: /bin/sh
-    command: >
-      -c '
-      EMAIL="$(cat /run/secrets/certbot_email)";
-      if [ ! -d /etc/letsencrypt/live/sico.dev ]; then
-        echo "No existing cert found, issuing initial certificate...";
-        certbot certonly --webroot
-          -w /var/www/certbot
-          -d sico.dev
-          -d www.sico.dev
-          --email "$EMAIL"
-          --agree-tos
-          --no-eff-email;
-      else
-        echo "Certificate already exists, skipping init.";
-      fi'
-
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-web:/var/www/certbot
-
-    networks:
-      - internal
-      - outbound
-
-    secrets:
-      - certbot_email
-
-  certbot-renew:
-    image: certbot/certbot
-
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 128M
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-
-    entrypoint: /bin/sh
-    command: >
-      -c "trap exit TERM;
-          while true;
-          do certbot renew --webroot -w /var/www/certbot;
-          sleep 12h;
-          done"
-
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-web:/var/www/certbot
-
-    networks:
-      - internal
-      - outbound
-
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-configs:
-  nginx_conf:
-    file: ./nginx.conf
-
-volumes:
-  certbot-etc:
-    external: true
-  certbot-web:
-    external: true
 
 networks:
   internal:
@@ -137,5 +63,13 @@ networks:
     external: true
 
 secrets:
-  certbot_email:
+  cloudflared_creds:
     external: true
+
+configs:
+  nginx_conf:
+    external: false
+    file: ./nginx.conf
+  cloudflared_conf:
+    external: false
+    file: ./cloudflared_conf.yaml

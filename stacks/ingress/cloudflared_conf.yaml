@@ -1,0 +1,8 @@
+tunnel: sico
+credentials-file: /etc/cloudflared/cloudflared_creds.json
+
+ingress:
+  - hostname: www.sico.dev
+    service: http://nginx:80
+
+  - service: http_status:404
