@@ -42,7 +42,6 @@ services:
 
     volumes:
       - ./fallback.html:/usr/share/nginx/html/fallback.html:ro
-      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
 
     configs:
       - source: nginx_conf

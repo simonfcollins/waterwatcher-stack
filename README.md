@@ -12,14 +12,21 @@ This is a **single-node Docker Swarm application** and does not currently suppor
 ```bash
 echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u simonfcollins --password-stdin
 ```
-4. Initialize the swarm with `sudo docker swarm init`.
+4. Initialize the swarm:
+```bash
+sudo docker swarm init
+```
 5. Run the [network creation script](networks/create.sh) to create the internal and outbound Docker networks.
-6. Run the [volume creation script](volumes/create.sh) to create the certbot-etc, certbot-web, pgdata, and hrrr-data persistent volumes.
+6. Run the [volume creation script](volumes/create.sh) to create the pgdata and hrrr-data persistent volumes.
 7. Follow the Docker secrets [setup instructions](secrets/README.md).
 8. Run the following commands to login to Cloudflared and create a tunnel:
 ```bash
     cloudflared login
     cloudflared tunnel create <tunnel_name>
+```
+9. Replace "example@email.com" in [nginx.conf](stacks/ingress/nginx.conf) with your email:
+```nginx
+proxy_set_header User-Agent "waterwatcher.sico.dev (example@email.com)"'
 ```
 
 ## Deployment
