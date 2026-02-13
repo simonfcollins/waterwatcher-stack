@@ -73,9 +73,6 @@ secrets:
     external: true
 
 configs:
-  nginx_conf:
-    external: false
-    file: ./nginx.conf
   cloudflared_conf:
     external: false
     file: ./cloudflared_conf.yaml

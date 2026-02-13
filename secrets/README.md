@@ -14,7 +14,7 @@ version control.
 - **Notes:**  
   - Must be created in Docker Swarm before deploying the stack:  
     ```bash
-    docker secret create postgres_password <password>
+    echo "password" | docker secret create postgres_password -
     ```
 
 ---
@@ -25,7 +25,7 @@ version control.
 - **Notes:**  
   - Must be created in Docker Swarm before deploying the stack: 
     ```bash
-    docker secret create springboot_db_password <password>
+    exho "password" | docker secret create springboot_db_password -
     ```
 
 ---
@@ -54,7 +54,7 @@ version control.
     in place of API keys.
   - Must be created in Docker Swarm before deploying the stack: 
     ```bash
-    docker secret create admin_email <email>
+    echo "example@email.com" | docker secret create admin_email -
     ```
 
 ---
