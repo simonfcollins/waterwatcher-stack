@@ -45,16 +45,3 @@ version control.
   - Encrypt or otherwise secure the original credentials file after this secret has been created.
 
 ---
-
-### 4. `admin_email`
-- **Purpose:** Included in User-Agent headers when contacting api.weather.gov.
-- **Used by:** Nginx server in the ingress stack.
-- **Notes:**  
-  - The User-Agent header is used by the National Weather Service for API authentication
-    in place of API keys.
-  - Must be created in Docker Swarm before deploying the stack: 
-    ```bash
-    echo "example@email.com" | docker secret create admin_email -
-    ```
-
----

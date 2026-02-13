@@ -42,13 +42,11 @@ services:
 
     volumes:
       - ./fallback.html:/usr/share/nginx/html/fallback.html:ro
-      - ./nginx.conf.template:/etx/nginx/templates/nginx.conf.template:ro
+      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
 
-    secrets:
-      - admin_email
-
-    environment:
-      USER_AGENT_EMAIL: /run/secrets/admin_email
+    configs:
+      - source: nginx_conf
+        target: /etc/nginx/nginx.conf
 
     networks:
       - internal
@@ -69,10 +67,11 @@ networks:
 secrets:
   cloudflared_creds:
     external: true
-  admin_email:
-    external: true
 
 configs:
+  nginx_conf:
+    external: false
+    file: ./nginx.conf
   cloudflared_conf:
     external: false
     file: ./cloudflared_conf.yaml
