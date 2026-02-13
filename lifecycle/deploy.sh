@@ -18,14 +18,6 @@ wait_for_service() {
 }
 
 echo "Deploying WaterWatcher"
-echo ""
-
-echo "Deploying ingress stack"
-docker stack deploy --with-registry-auth -c ./stacks/ingress/compose.yaml ingress
-
-for svc in $(docker stack services ingress --format "{{.Name}}"); do
-  wait_for_service "$svc"
-done
 
 echo ""
 echo "Deploying data stack"
@@ -48,6 +40,14 @@ echo "Deploying hrrr stack"
 docker stack deploy --with-registry-auth -c ./stacks/hrrr/compose.yaml hrrr
 
 for svc in $(docker stack services hrrr --format "{{.Name}}"); do
+  wait_for_service "$svc"
+done
+
+echo ""
+echo "Deploying ingress stack"
+docker stack deploy --with-registry-auth -c ./stacks/ingress/compose.yaml ingress
+
+for svc in $(docker stack services ingress --format "{{.Name}}"); do
   wait_for_service "$svc"
 done
 

@@ -1,7 +1,8 @@
 # Docker Secrets Documentation
 
 This document describes the required Docker secrets necessary for deployment of the 
-Water Watcher application.
+Water Watcher application. All secrets should be kept secure and not exposed in 
+version control.
 
 ---
 
@@ -13,9 +14,8 @@ Water Watcher application.
 - **Notes:**  
   - Must be created in Docker Swarm before deploying the stack:  
     ```bash
-    echo "your_db_password_here" | docker secret create postgres_password -
+    docker secret create postgres_password <password>
     ```
-  - Keep this secret secure; do not expose it in version control.
 
 ---
 
@@ -25,15 +25,14 @@ Water Watcher application.
 - **Notes:**  
   - Must be created in Docker Swarm before deploying the stack: 
     ```bash
-    echo "your_db_password_here" | docker secret create springboot_db_password -
+    docker secret create springboot_db_password <password>
     ```
-  - Keep this secret secure; do not expose it in version control.
 
 ---
 
 ### 3. `cloudflared_creds`
-- **Purpose:** <tunnel_uuid>.json credential file for verifying .
-- **Used by:** Cloudflared service in the ingres stack.
+- **Purpose:** Cloudflared tunnel credentials to authenticate tunnel connection.
+- **Used by:** Cloudflared service in the ingress stack.
 - **Notes:**  
   - Auto generated and saved to ~/.cloudflared/ with the following command:
     ```bash
@@ -43,7 +42,19 @@ Water Watcher application.
     ```bash
     docker secret create cloudflared_creds ~/.cloudflared/<tunnel_uuid>.json
     ```
-  - Keep this secret secure; do not expose it in version control.
   - Encrypt or otherwise secure the original credentials file after this secret has been created.
+
+---
+
+### 4. `admin_email`
+- **Purpose:** Included in User-Agent headers when contacting api.weather.gov.
+- **Used by:** Nginx server in the ingress stack.
+- **Notes:**  
+  - The User-Agent header is used by the National Weather Service for API authentication
+    in place of API keys.
+  - Must be created in Docker Swarm before deploying the stack: 
+    ```bash
+    docker secret create admin_email <email>
+    ```
 
 ---

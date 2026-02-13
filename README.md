@@ -8,7 +8,10 @@ This is a **single-node Docker Swarm application** and does not currently suppor
 ## Setup
 1. [Install](https://docs.docker.com/engine/install/) the official Docker Engine packages for your platform.
 2. [Install](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/) the Cloudflared CLI.
-3. Connect Docker to the the GitHub Container Repository with `echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u simonfcollins --password-stdin`
+3. Connect Docker to the the GitHub Container Repository:
+```bash
+echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u simonfcollins --password-stdin
+```
 4. Initialize the swarm with `sudo docker swarm init`.
 5. Run the [network creation script](networks/create.sh) to create the internal and outbound Docker networks.
 6. Run the [volume creation script](volumes/create.sh) to create the certbot-etc, certbot-web, pgdata, and hrrr-data persistent volumes.
@@ -20,11 +23,23 @@ This is a **single-node Docker Swarm application** and does not currently suppor
 ```
 
 ## Deployment
-1. Run the following command:
+1. Navigate to the project root directory.
+2. Run the following command:
 ```bash
 chmod +x ./lifecycle/deploy.sh
 ```
-1. From the project directory 'waterwatcher-stack/', run the [deploy script](lifecycle/deploy.sh) `./lifecycle/deploy.sh`
+3. Run the [deploy script](lifecycle/deploy.sh):
+```bash
+./lifecycle/deploy.sh
+```
 
 ## Teardown
-1. Run the [teardown script](lifecycle/teardown.sh).
+1. Navigate to the project root directory.
+2. Run the following command:
+```bash
+chmod +x ./lifecycle/teardown.sh
+```
+3. Run the [teardown script](lifecycle/teardown.sh):
+```bash
+./lifecycle/teardown.sh
+```

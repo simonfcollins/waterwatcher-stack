@@ -11,17 +11,17 @@ services:
       restart_policy:
         condition: on-failure
 
-    networks:
-      - internal
-      - outbound
+    configs:
+      - source: cloudflared_conf
+        target: /etc/cloudflared/config.yml
 
     secrets:
       - source: cloudflared_creds
         target: /etc/cloudflared/cloudflared_creds.json
 
-    configs:
-      - source: cloudflared_conf
-        target: /etc/cloudflared/config.yml
+    networks:
+      - internal
+      - outbound
 
   nginx:
     image: nginx:latest
@@ -40,15 +40,19 @@ services:
       restart_policy:
         condition: on-failure
 
-    configs:
-      - source: nginx_conf
-        target: /etc/nginx/nginx.conf
-
     volumes:
       - ./fallback.html:/usr/share/nginx/html/fallback.html:ro
+      - ./nginx.conf.template:/etx/nginx/templates/nginx.conf.template:ro
+
+    secrets:
+      - admin_email
+
+    environment:
+      USER_AGENT_EMAIL: /run/secrets/admin_email
 
     networks:
       - internal
+      - outbound
 
     logging:
       driver: json-file
@@ -64,6 +68,8 @@ networks:
 
 secrets:
   cloudflared_creds:
+    external: true
+  admin_email:
     external: true
 
 configs:

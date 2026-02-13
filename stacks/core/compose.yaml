@@ -16,6 +16,7 @@ services:
         condition: on-failure
 
     environment:
+      SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_USERNAME: springboot
       SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/springboot_db_password
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/waterwatcher?TimeZone=UTC&currentSchema=production,extensions

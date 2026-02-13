@@ -2,7 +2,13 @@ tunnel: sico
 credentials-file: /etc/cloudflared/cloudflared_creds.json
 
 ingress:
+  - hostname: sico.dev
+    service: http://nginx:80
+
   - hostname: www.sico.dev
+    service: http://nginx:80
+
+  - hostname: waterwatcher.sico.dev
     service: http://nginx:80
 
   - service: http_status:404
