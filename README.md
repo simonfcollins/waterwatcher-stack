@@ -26,7 +26,7 @@ sudo docker swarm init
 ```
 9. Replace "example@email.com" in [nginx.conf](stacks/ingress/nginx.conf) with your email:
 ```nginx
-proxy_set_header User-Agent "waterwatcher.sico.dev (example@email.com)"'
+proxy_set_header User-Agent "waterwatcher.sico.dev (example@email.com)";
 ```
 
 ## Deployment

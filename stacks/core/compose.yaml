@@ -1,6 +1,36 @@
 version: "3.9"
 
 services:
+  react-frontend:
+    image: ghcr.io/simonfcollins/waterwatcher-frontend:1.0.0
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          memory: 256M
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+    networks:
+      - internal
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost/"]
+      interval: 10s
+      timeout: 3s
+      start_period: 240s
+      retries: 5
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   spring-backend:
     image: ghcr.io/simonfcollins/waterwatcher-backend:1.0.0
 
