@@ -61,6 +61,7 @@ services:
 
 volumes:
   pgdata:
+    external: true
 
 networks:
   internal:

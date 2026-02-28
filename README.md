@@ -1,5 +1,5 @@
 # WaterWatcher Docker Swarm Stack
-This repository contains modular Docker Swarm stack files and documentation for deploying the WaterWatcher application.
+This repository contains modular Docker Swarm stack files and documentation for deploying the [WaterWatcher](https://waterwatcher.sico.dev) application.
 The purpose of this repository is to make deployment easy on myself. The referenced GHCR containers are private. 
 
 ## Info
