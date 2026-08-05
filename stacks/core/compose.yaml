@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   react-frontend:
-    image: ghcr.io/simonfcollins/waterwatcher-frontend:1.0.0
+    image: ghcr.io/simonfcollins/waterwatcher-frontend:1.0.2
 
     deploy:
       resources:
@@ -14,6 +14,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+
+    ports:
+      - "3000:80"
 
     networks:
       - internal
@@ -40,10 +43,14 @@ services:
           cpus: "2.0"
           memory: 8G
         reservations:
+          cpus: "1.0"
           memory: 4G
       replicas: 1
       restart_policy:
         condition: on-failure
+
+    ports:
+      - "8080:8080"
 
     environment:
       SPRING_PROFILES_ACTIVE: prod

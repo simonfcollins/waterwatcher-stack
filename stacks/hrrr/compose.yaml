@@ -5,7 +5,7 @@ services:
     image: ghcr.io/simonfcollins/hrrr-service:1.0.0
 
     deploy:
-      replicas: 3
+      replicas: 2
       restart_policy:
         condition: on-failure
       update_config:
@@ -14,11 +14,8 @@ services:
         failure_action: rollback
       resources:
         limits:
-          cpus: "1.0"
-          memory: 1G
-        reservations:
           cpus: "0.5"
-          memory: 768M
+          memory: 2G
 
     volumes:
       - hrrr-data:/data/hrrrzarr/:ro
@@ -80,3 +77,4 @@ networks:
     external: true
   outbound:
     external: true
+    

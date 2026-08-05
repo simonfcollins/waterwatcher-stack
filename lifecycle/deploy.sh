@@ -44,14 +44,6 @@ for svc in $(docker stack services hrrr --format "{{.Name}}"); do
 done
 
 echo ""
-echo "Deploying ingress stack"
-docker stack deploy --detach=false -c ./stacks/ingress/compose.yaml ingress
-
-for svc in $(docker stack services ingress --format "{{.Name}}"); do
-  wait_for_service "$svc"
-done
-
-echo ""
 docker service ls
 echo ""
 
